@@ -13,6 +13,7 @@
     "dependencies": {
         "compile": [
             "io.restx:restx-core:${restx.version}",
+            "io.restx:restx-barbarywatch:${restx.version}",
             "io.restx:restx-security-basic:${restx.version}",
             "io.restx:restx-core-annotation-processor:${restx.version}",
             "io.restx:restx-factory:${restx.version}",
