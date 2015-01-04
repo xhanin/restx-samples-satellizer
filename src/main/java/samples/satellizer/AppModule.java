@@ -34,6 +34,12 @@ public class AppModule {
     }
 
     @Provides
+    public ConfigSupplier secretsConfigSupplier(ConfigLoader configLoader) {
+        // Load settings.properties in samples.satellizer package as a set of config entries
+        return configLoader.fromResource("samples/satellizer/secrets");
+    }
+
+    @Provides
     public CredentialsStrategy credentialsStrategy() {
         return new BCryptCredentialsStrategy();
     }
