@@ -1,5 +1,6 @@
 package samples.satellizer;
 
+import restx.admin.AdminModule;
 import restx.config.ConfigLoader;
 import restx.config.ConfigSupplier;
 import restx.factory.Provides;
@@ -7,12 +8,15 @@ import restx.factory.Provides;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableSet;
+import restx.jongo.JongoCollection;
+import restx.jongo.JongoUserRepository.RefUserByNameStrategy;
 import restx.security.*;
 import restx.factory.Module;
 import restx.factory.Provides;
 import javax.inject.Named;
 
 import java.nio.file.Paths;
+import java.util.Map;
 
 @Module
 public class AppModule {
@@ -47,34 +51,11 @@ public class AppModule {
     @Provides
     public BasicPrincipalAuthenticator basicPrincipalAuthenticator(
             SecuritySettings securitySettings, CredentialsStrategy credentialsStrategy,
-            @Named("restx.admin.passwordHash") String defaultAdminPasswordHash, ObjectMapper mapper) {
+            @Named("restx.admin.passwordHash") String defaultAdminPasswordHash,
+            AppUserRepository userRepository
+            ) {
         return new StdBasicPrincipalAuthenticator(new StdUserService<>(
-                // use file based users repository.
-                // Developer's note: prefer another storage mechanism for your users if you need real user management
-                // and better perf
-                new FileBasedUserRepository<>(
-                        StdUser.class, // this is the class for the User objects, that you can get in your app code
-                        // with RestxSession.current().getPrincipal().get()
-                        // it can be a custom user class, it just need to be json deserializable
-                        mapper,
-
-                        // this is the default restx admin, useful to access the restx admin console.
-                        // if one user with restx-admin role is defined in the repository, this default user won't be
-                        // available anymore
-                        new StdUser("admin", ImmutableSet.<String>of("*")),
-
-                        // the path where users are stored
-                        Paths.get("data/users.json"),
-
-                        // the path where credentials are stored. isolating both is a good practice in terms of security
-                        // it is strongly recommended to follow this approach even if you use your own repository
-                        Paths.get("data/credentials.json"),
-
-                        // tells that we want to reload the files dynamically if they are touched.
-                        // this has a performance impact, if you know your users / credentials never change without a
-                        // restart you can disable this to get better perfs
-                        true),
-                credentialsStrategy, defaultAdminPasswordHash),
+                userRepository, credentialsStrategy, defaultAdminPasswordHash),
                 securitySettings);
     }
 }

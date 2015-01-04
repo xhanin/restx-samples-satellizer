@@ -1,7 +1,10 @@
 package samples.satellizer;
 
 import java.text.ParseException;
+import java.util.Map;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import org.joda.time.DateTime;
 
 import com.nimbusds.jose.JOSEException;
@@ -12,16 +15,20 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.ReadOnlyJWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import restx.factory.Component;
+import restx.RestxRequest;
+import restx.WebException;
+import restx.http.HttpStatus;
+import restx.security.RestxPrincipal;
 
-@Component
-public final class AuthUtils {
+public class AuthUtils<U extends RestxPrincipal> {
 	public static final String AUTH_HEADER_KEY = "Authorization";
 
 	private static final JWSHeader JWT_HEADER = new JWSHeader(JWSAlgorithm.HS256);
 	private final String tokenSecret;
+	private final OAuthUserRepository<U> dao;
 
-	public AuthUtils(ClientSecretsSettings secrets) {
+	public AuthUtils(ClientSecretsSettings secrets, OAuthUserRepository<U> dao) {
+		this.dao = dao;
 		this.tokenSecret = secrets.getTokenSecret();
 	}
 
@@ -58,5 +65,39 @@ public final class AuthUtils {
 	
 	public static String getSerializedToken(String authHeader) {
 		return authHeader.split(" ")[1];
+	}
+
+	public Token processUser(RestxRequest request, String providerName, String userIdForProvider,
+							 String userName, Map<String, Object> userInfo) {
+		U user;
+
+		String authHeader = request.getHeader(AuthUtils.AUTH_HEADER_KEY).or("");
+		if (!Strings.isNullOrEmpty(authHeader)) {
+			// Step 3a. If user is already signed in then link accounts.
+			if (dao.findByProvider(providerName, userIdForProvider).isPresent()) {
+				throw new WebException(HttpStatus.CONFLICT,
+						String.format("There is already a %s account that belongs to you", providerName));
+			}
+
+			Optional<U> userFromDb = dao.findUserByName(getSubject(authHeader));
+			if (!userFromDb.isPresent()) {
+				throw new WebException(HttpStatus.UNAUTHORIZED, "Current user unknown");
+			}
+
+			user = userFromDb.get();
+
+			dao.linkProviderAccount(user, providerName, userIdForProvider, userName, userInfo);
+		} else {
+			// Step 3b. Create a new user account or return an existing one.
+			Optional<U> userFromDb = dao.findByProvider(providerName, userIdForProvider);
+
+			if (userFromDb.isPresent()) {
+				user = userFromDb.get();
+			} else {
+				user = dao.createNewUserWithLinkedProviderAccount(providerName, userIdForProvider, userName, userInfo);
+			}
+		}
+
+		return createToken(request.getClientAddress(), user.getName());
 	}
 }

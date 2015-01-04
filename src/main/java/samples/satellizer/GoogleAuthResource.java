@@ -1,6 +1,5 @@
 package samples.satellizer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.kevinsawicki.http.HttpRequest;
@@ -35,9 +34,9 @@ public class GoogleAuthResource {
             GRANT_TYPE_KEY = "grant_type",
             AUTH_CODE = "authorization_code";
 
-
-    private final String accessTokenUrl = "https://accounts.google.com/o/oauth2/token";
-    private final String peopleApiUrl = "https://www.googleapis.com/plus/v1/people/me/openIdConnect";
+    public static final String
+            ACCESS_TOKEN_URL = "https://accounts.google.com/o/oauth2/token",
+            PEOPLE_API_URL = "https://www.googleapis.com/plus/v1/people/me/openIdConnect";
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -55,21 +54,21 @@ public class GoogleAuthResource {
                               @Param(kind = Param.Kind.CONTEXT, value = "request") RestxRequest request) throws IOException {
         String accessToken = getAccessToken(payload);
 
-        HttpRequest peopleRequest = HttpRequest.get(peopleApiUrl).authorization(String.format("Bearer %s", accessToken));
+        HttpRequest peopleRequest = HttpRequest.get(PEOPLE_API_URL).authorization(String.format("Bearer %s", accessToken));
 
         checkRequest(peopleRequest);
 
-        Map<String, Object> response = getResponseAsMap(peopleRequest);
-        String userId = (String) response.get("sub");
-        String userName = (String) response.get("name");
+        Map<String, Object> userInfo = getResponseAsMap(peopleRequest);
+        String userId = (String) userInfo.get("sub");
+        String userName = (String) userInfo.get("name");
 
-        logger.debug("{} authenticated with Google", userName);
+        logger.debug("{} authenticated with Google - {}", userName, userInfo);
 
-        return authUtils.createToken(request.getClientAddress(), userId);
+        return authUtils.processUser(request, "google", userId, userName, userInfo);
     }
 
     private String getAccessToken(OAuthPayload payload) throws IOException {
-        HttpRequest accessTokenRequest = HttpRequest.post(accessTokenUrl)
+        HttpRequest accessTokenRequest = HttpRequest.post(ACCESS_TOKEN_URL)
                 .form(ImmutableMap.of(
                         CLIENT_ID_KEY, payload.getClientId(),
                         REDIRECT_URI_KEY, payload.getRedirectUri(),
