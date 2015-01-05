@@ -1,5 +1,6 @@
 package samples.satellizer;
 
+import com.google.common.base.Optional;
 import org.bson.types.ObjectId;
 import restx.factory.Component;
 import restx.jongo.JongoCollection;
@@ -13,6 +14,8 @@ import javax.inject.Named;
  */
 @Component
 public class AppUserRepository extends JongoOAuthUserRepository<AppUser> {
+    private final JongoCollection users;
+
     public AppUserRepository(@Named("users") JongoCollection users,
                              @Named("usersCredentials") JongoCollection usersCredentials,
                              @Named("usersProviders") JongoCollection usersProviders,
@@ -27,6 +30,7 @@ public class AppUserRepository extends JongoOAuthUserRepository<AppUser> {
                 AppUser.class,
                 // get NPE if default admin is not defined
                 new AppUser().setId(new ObjectId().toString()));
+        this.users = users;
     }
 
     @Override
@@ -38,9 +42,17 @@ public class AppUserRepository extends JongoOAuthUserRepository<AppUser> {
 
     @Override
     protected AppUser createNewUserFromProvider(ProviderUserInfo providerUserInfo) {
-        return createUser(new AppUser()
-                .setDisplayName(providerUserInfo.getDisplayName().or(""))
-                .setEmail(providerUserInfo.getEmail().or(""))
+        return createUser(newAppUser()
+                        .setDisplayName(providerUserInfo.getDisplayName().or(""))
+                        .setEmail(providerUserInfo.getEmail().or(""))
         );
+    }
+
+    public AppUser newAppUser() {
+        return new AppUser().setId("U-" + new ObjectId());
+    }
+
+    public Optional<AppUser> findByEmail(String email) {
+        return Optional.fromNullable(users.get().findOne("{email: #}", email).as(AppUser.class));
     }
 }

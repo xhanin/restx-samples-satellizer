@@ -1,12 +1,6 @@
 package samples.satellizer;
 
-import java.text.ParseException;
-import java.util.Map;
-
 import com.google.common.base.Optional;
-import com.google.common.base.Strings;
-import org.joda.time.DateTime;
-
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -14,9 +8,8 @@ import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import org.joda.time.DateTime;
 import restx.RestxRequest;
-import restx.WebException;
-import restx.http.HttpStatus;
 import restx.security.RestxPrincipal;
 import restx.security.RestxSession;
 
@@ -63,7 +56,7 @@ public class AuthUtils<U extends RestxPrincipal> {
 		return createToken(request.getClientAddress(), user.getName());
 	}
 
-	private Token createToken(String host, String subject) {
+	public Token createToken(String host, String subject) {
 		JWTClaimsSet claim = new JWTClaimsSet();
 		claim.setSubject(subject);
 		claim.setIssuer(host);
