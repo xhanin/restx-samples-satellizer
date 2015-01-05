@@ -3,6 +3,7 @@ package samples.satellizer;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.kevinsawicki.http.HttpRequest;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,10 +62,16 @@ public class GoogleAuthResource {
         Map<String, Object> userInfo = getResponseAsMap(peopleRequest);
         String userId = (String) userInfo.get("sub");
         String userName = (String) userInfo.get("name");
+        String email = (String) userInfo.get("email");
 
         logger.debug("{} authenticated with Google - {}", userName, userInfo);
 
-        return authUtils.processUser(request, "google", userId, userName, userInfo);
+        return authUtils.processUser(request, new ProviderUserInfo()
+                .setProviderName("google")
+                .setUserIdForProvider(userId)
+                .setDisplayName(Optional.of(userName))
+                .setEmail(Optional.fromNullable(email))
+                .setUserInfo(userInfo));
     }
 
     private String getAccessToken(OAuthPayload payload) throws IOException {

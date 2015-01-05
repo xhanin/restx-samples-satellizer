@@ -1,11 +1,11 @@
 package samples.satellizer;
 
+import org.bson.types.ObjectId;
 import restx.factory.Component;
 import restx.jongo.JongoCollection;
 import restx.security.CredentialsStrategy;
 
 import javax.inject.Named;
-import java.util.Map;
 
 /**
  * Date: 4/1/15
@@ -18,13 +18,15 @@ public class AppUserRepository extends JongoOAuthUserRepository<AppUser> {
                              @Named("usersProviders") JongoCollection usersProviders,
                              CredentialsStrategy credentialsStrategy) {
         super(users, usersCredentials, usersProviders,
-                new RefUserByKeyStrategy<AppUser>() {
+                new RefUserByNameStrategy<AppUser>() {
                     @Override
-                    protected String getId(AppUser user) {
-                        return user.getId();
+                    public String getNameProperty() {
+                        return "_id";
                     }
                 }, credentialsStrategy,
-                AppUser.class, null);
+                AppUser.class,
+                // get NPE if default admin is not defined
+                new AppUser().setId(new ObjectId().toString()));
     }
 
     @Override
@@ -35,7 +37,10 @@ public class AppUserRepository extends JongoOAuthUserRepository<AppUser> {
     }
 
     @Override
-    protected AppUser createNewUserFromProvider(String providerName, String userName, Map<String, Object> userInfo) {
-        return createUser(new AppUser().setUserName(userName));
+    protected AppUser createNewUserFromProvider(ProviderUserInfo providerUserInfo) {
+        return createUser(new AppUser()
+                .setDisplayName(providerUserInfo.getDisplayName().or(""))
+                .setEmail(providerUserInfo.getEmail().or(""))
+        );
     }
 }

@@ -8,13 +8,12 @@ import restx.jongo.JongoUserRepository;
 import restx.security.CredentialsStrategy;
 import restx.security.RestxPrincipal;
 
-import java.util.Map;
-
 /**
  * Date: 4/1/15
  * Time: 22:29
  */
 public abstract class JongoOAuthUserRepository<U extends RestxPrincipal> extends JongoUserRepository<U> implements OAuthUserRepository<U> {
+
     public static class ProviderUser {
         @Id @ObjectId
         private String id;
@@ -86,6 +85,13 @@ public abstract class JongoOAuthUserRepository<U extends RestxPrincipal> extends
     }
 
     @Override
+    public boolean hasProvider(U user, String providerName) {
+        return usersProviders.get()
+                .findOne("{provider: #, userRef: #}", providerName, userRefStrategy.getUserRef(user))
+                .as(ProviderUser.class) != null;
+    }
+
+    @Override
     public Optional<U> findByProvider(String providerName, String userIdForProvider) {
         ProviderUser providerUser = usersProviders.get()
                 .findOne("{provider: #, providerUserId: #}", providerName, userIdForProvider).as(ProviderUser.class);
@@ -98,24 +104,22 @@ public abstract class JongoOAuthUserRepository<U extends RestxPrincipal> extends
     }
 
     @Override
-    public void linkProviderAccount(U user, String providerName, String userIdForProvider,
-                                    String userName, Map<String, Object> userInfo) {
+    public void linkProviderAccount(U user, ProviderUserInfo providerUserInfo) {
         usersProviders.get().save(new ProviderUser()
-                .setProvider(providerName)
-                .setProviderUserId(userIdForProvider)
+                .setProvider(providerUserInfo.getProviderName())
+                .setProviderUserId(providerUserInfo.getUserIdForProvider())
                 .setUserRef(userRefStrategy.getUserRef(user))
                 );
     }
 
     @Override
-    public U createNewUserWithLinkedProviderAccount(String providerName, String userIdForProvider,
-                                                    String userName, Map<String, Object> userInfo) {
-        U user = createNewUserFromProvider(providerName, userName, userInfo);
+    public U createNewUserWithLinkedProviderAccount(ProviderUserInfo providerUserInfo) {
+        U user = createNewUserFromProvider(providerUserInfo);
 
-        linkProviderAccount(user, providerName, userIdForProvider, userName, userInfo);
+        linkProviderAccount(user, providerUserInfo);
 
         return user;
     }
 
-    protected abstract U createNewUserFromProvider(String providerName, String userName, Map<String, Object> userInfo);
+    protected abstract U createNewUserFromProvider(ProviderUserInfo providerUserInfo);
 }

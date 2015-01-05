@@ -3,7 +3,6 @@ package samples.satellizer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
 import org.jongo.marshall.jackson.oid.Id;
-import org.jongo.marshall.jackson.oid.ObjectId;
 import restx.security.RestxPrincipal;
 
 import java.util.HashSet;
@@ -14,10 +13,12 @@ import java.util.Set;
  * Time: 23:08
  */
 public class AppUser implements RestxPrincipal {
-    @Id @ObjectId
+    @Id
     private String id;
 
-    private String userName;
+    private String email;
+
+    private String displayName;
 
     private Set<String> roles = new HashSet<>();
 
@@ -37,8 +38,12 @@ public class AppUser implements RestxPrincipal {
         return id;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getEmail() {
+        return email;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     public Set<String> getRoles() {
@@ -50,8 +55,13 @@ public class AppUser implements RestxPrincipal {
         return this;
     }
 
-    public AppUser setUserName(final String userName) {
-        this.userName = userName;
+    public AppUser setEmail(final String email) {
+        this.email = email;
+        return this;
+    }
+
+    public AppUser setDisplayName(final String displayName) {
+        this.displayName = displayName;
         return this;
     }
 
