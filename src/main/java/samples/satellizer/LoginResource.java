@@ -18,12 +18,12 @@ import restx.security.PermitAll;
  */
 @Component
 @RestxResource
-public class SigninResource {
+public class LoginResource {
     private final AppUserRepository userRepository;
     private final AuthUtils authUtils;
     private final CredentialsStrategy credentialsStrategy;
 
-    public SigninResource(AppUserRepository userRepository, AuthUtils authUtils, CredentialsStrategy credentialsStrategy) {
+    public LoginResource(AppUserRepository userRepository, AuthUtils authUtils, CredentialsStrategy credentialsStrategy) {
         this.userRepository = userRepository;
         this.authUtils = authUtils;
         this.credentialsStrategy = credentialsStrategy;
@@ -31,9 +31,9 @@ public class SigninResource {
 
     @PermitAll
     @POST("/auth/login")
-    public Token signin(AppUserSignin signin,
+    public Token login(AppUserLogin login,
                         @Param(kind = Param.Kind.CONTEXT, value = "request") RestxRequest request) {
-        Optional<AppUser> user = userRepository.findByEmail(signin.getEmail());
+        Optional<AppUser> user = userRepository.findByEmail(login.getEmail());
 
         if (!user.isPresent()) {
             throw new WebException(HttpStatus.UNAUTHORIZED, "Invalid login, check email and password");
@@ -44,7 +44,7 @@ public class SigninResource {
             throw new WebException(HttpStatus.UNAUTHORIZED, "Invalid login, check email and password");
         }
 
-        if (!credentialsStrategy.checkCredentials(user.get().getName(), signin.getPassword(), credentials.get())) {
+        if (!credentialsStrategy.checkCredentials(user.get().getName(), login.getPassword(), credentials.get())) {
             throw new WebException(HttpStatus.UNAUTHORIZED, "Invalid login, check email and password");
         }
 

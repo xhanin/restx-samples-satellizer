@@ -4,7 +4,7 @@ package samples.satellizer;
  * Date: 5/1/15
  * Time: 22:50
  */
-public class AppUserSignin {
+public class AppUserLogin {
     private String email;
     private String password;
 
@@ -16,12 +16,12 @@ public class AppUserSignin {
         return password;
     }
 
-    public AppUserSignin setEmail(final String email) {
+    public AppUserLogin setEmail(final String email) {
         this.email = email;
         return this;
     }
 
-    public AppUserSignin setPassword(final String password) {
+    public AppUserLogin setPassword(final String password) {
         this.password = password;
         return this;
     }
