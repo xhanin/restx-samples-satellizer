@@ -9,6 +9,7 @@ import restx.annotations.RestxResource;
 import restx.factory.Component;
 import restx.http.HttpStatus;
 import restx.security.CredentialsStrategy;
+import restx.security.PermitAll;
 
 
 /**
@@ -28,6 +29,7 @@ public class SigninResource {
         this.credentialsStrategy = credentialsStrategy;
     }
 
+    @PermitAll
     @POST("/auth/login")
     public Token signin(AppUserSignin signin,
                         @Param(kind = Param.Kind.CONTEXT, value = "request") RestxRequest request) {
