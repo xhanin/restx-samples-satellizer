@@ -1,4 +1,4 @@
-package samples.satellizer;
+package samples.satellizer.service;
 
 import com.google.common.base.Optional;
 import org.bson.types.ObjectId;
@@ -6,6 +6,10 @@ import restx.factory.Component;
 import restx.http.HttpStatus;
 import restx.jongo.JongoCollection;
 import restx.security.CredentialsStrategy;
+import restx.security.oauth.ProviderUserInfo;
+import restx.security.oauth.jongo.JongoOAuthUserRepository;
+import samples.satellizer.SatellizerException;
+import samples.satellizer.domain.AppUser;
 
 import javax.inject.Named;
 

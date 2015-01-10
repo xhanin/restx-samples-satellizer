@@ -1,4 +1,4 @@
-package samples.satellizer;
+package restx.security.oauth.providers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +15,11 @@ import restx.annotations.RestxResource;
 import restx.factory.Component;
 import restx.http.HttpStatus;
 import restx.security.PermitAll;
+import restx.security.oauth.ClientSecretsSettings;
+import restx.security.oauth.OAuthPayload;
+import restx.security.oauth.OAuthService;
+import restx.security.oauth.ProviderUserInfo;
+import restx.security.oauth.Token;
 
 import java.io.IOException;
 import java.util.Map;
@@ -25,8 +30,8 @@ import java.util.Map;
  */
 @Component
 @RestxResource(group = "auth")
-public class GoogleAuthResource {
-    private static final Logger logger = LoggerFactory.getLogger(GoogleAuthResource.class);
+public class GoogleAuthProvider {
+    private static final Logger logger = LoggerFactory.getLogger(GoogleAuthProvider.class);
 
     public static final String
             CLIENT_ID_KEY = "client_id",
@@ -44,7 +49,7 @@ public class GoogleAuthResource {
     private final ClientSecretsSettings secrets;
     private final OAuthService OAuthService;
 
-    public GoogleAuthResource(ClientSecretsSettings secrets, OAuthService OAuthService) {
+    public GoogleAuthProvider(ClientSecretsSettings secrets, restx.security.oauth.OAuthService OAuthService) {
         this.secrets = secrets;
         this.OAuthService = OAuthService;
     }

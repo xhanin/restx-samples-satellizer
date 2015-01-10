@@ -1,4 +1,4 @@
-package samples.satellizer;
+package samples.satellizer.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;

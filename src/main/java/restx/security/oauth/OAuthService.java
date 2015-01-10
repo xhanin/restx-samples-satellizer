@@ -1,4 +1,4 @@
-package samples.satellizer;
+package restx.security.oauth;
 
 import com.google.common.base.Optional;
 import com.nimbusds.jose.JOSEException;

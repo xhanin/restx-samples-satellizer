@@ -1,10 +1,13 @@
-package samples.satellizer;
+package samples.satellizer.rest;
 
 import restx.annotations.GET;
 import restx.annotations.PUT;
 import restx.annotations.RestxResource;
 import restx.factory.Component;
 import restx.security.RestxSession;
+import samples.satellizer.domain.AppUser;
+import samples.satellizer.domain.AppUserProfile;
+import samples.satellizer.service.AppUserRepository;
 
 /**
  * Date: 5/1/15

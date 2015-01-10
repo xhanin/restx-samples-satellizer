@@ -1,4 +1,4 @@
-package samples.satellizer;
+package restx.security.oauth.jongo;
 
 import com.google.common.base.Optional;
 import org.jongo.marshall.jackson.oid.Id;
@@ -7,6 +7,8 @@ import restx.jongo.JongoCollection;
 import restx.jongo.JongoUserRepository;
 import restx.security.CredentialsStrategy;
 import restx.security.RestxPrincipal;
+import restx.security.oauth.OAuthUserRepository;
+import restx.security.oauth.ProviderUserInfo;
 
 /**
  * Date: 4/1/15

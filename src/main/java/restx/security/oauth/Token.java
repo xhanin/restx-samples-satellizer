@@ -1,4 +1,4 @@
-package samples.satellizer;
+package restx.security.oauth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -1,4 +1,4 @@
-package samples.satellizer;
+package samples.satellizer.rest;
 
 import restx.RestxRequest;
 import restx.annotations.POST;
@@ -7,6 +7,12 @@ import restx.annotations.RestxResource;
 import restx.factory.Component;
 import restx.http.HttpStatus;
 import restx.security.PermitAll;
+import restx.security.oauth.OAuthService;
+import restx.security.oauth.Token;
+import samples.satellizer.domain.AppUser;
+import samples.satellizer.service.AppUserRepository;
+import samples.satellizer.domain.AppUserSignup;
+import samples.satellizer.SatellizerException;
 
 /**
  * Date: 5/1/15
@@ -16,7 +22,7 @@ import restx.security.PermitAll;
 @RestxResource
 public class SignupResource {
     private final AppUserRepository userRepository;
-    private final OAuthService OAuthService;
+    private final restx.security.oauth.OAuthService OAuthService;
 
     public SignupResource(AppUserRepository userRepository, OAuthService OAuthService) {
         this.userRepository = userRepository;

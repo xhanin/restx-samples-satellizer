@@ -1,4 +1,4 @@
-package samples.satellizer;
+package restx.security.oauth;
 
 import org.hibernate.validator.constraints.NotBlank;
 

@@ -1,4 +1,4 @@
-package samples.satellizer;
+package samples.satellizer.rest;
 
 import com.google.common.base.Optional;
 import restx.RestxRequest;
@@ -9,6 +9,12 @@ import restx.factory.Component;
 import restx.http.HttpStatus;
 import restx.security.CredentialsStrategy;
 import restx.security.PermitAll;
+import restx.security.oauth.OAuthService;
+import restx.security.oauth.Token;
+import samples.satellizer.domain.AppUser;
+import samples.satellizer.domain.AppUserLogin;
+import samples.satellizer.service.AppUserRepository;
+import samples.satellizer.SatellizerException;
 
 
 /**
@@ -22,7 +28,7 @@ public class LoginResource {
     private final OAuthService OAuthService;
     private final CredentialsStrategy credentialsStrategy;
 
-    public LoginResource(AppUserRepository userRepository, OAuthService OAuthService, CredentialsStrategy credentialsStrategy) {
+    public LoginResource(AppUserRepository userRepository, restx.security.oauth.OAuthService OAuthService, CredentialsStrategy credentialsStrategy) {
         this.userRepository = userRepository;
         this.OAuthService = OAuthService;
         this.credentialsStrategy = credentialsStrategy;

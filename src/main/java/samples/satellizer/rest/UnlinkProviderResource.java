@@ -1,10 +1,12 @@
-package samples.satellizer;
+package samples.satellizer.rest;
 
 import restx.annotations.GET;
 import restx.annotations.RestxResource;
 import restx.factory.Component;
 import restx.http.HttpStatus;
 import restx.security.RestxSession;
+import restx.security.oauth.OAuthUserRepository;
+import samples.satellizer.SatellizerException;
 
 /**
  * Date: 10/1/15

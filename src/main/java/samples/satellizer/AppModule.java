@@ -1,22 +1,15 @@
 package samples.satellizer;
 
-import restx.admin.AdminModule;
 import restx.config.ConfigLoader;
 import restx.config.ConfigSupplier;
 import restx.factory.Provides;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableSet;
-import restx.jongo.JongoCollection;
-import restx.jongo.JongoUserRepository.RefUserByNameStrategy;
 import restx.security.*;
 import restx.factory.Module;
-import restx.factory.Provides;
-import javax.inject.Named;
+import samples.satellizer.service.AppUserRepository;
 
-import java.nio.file.Paths;
-import java.util.Map;
+import javax.inject.Named;
 
 @Module
 public class AppModule {

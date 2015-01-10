@@ -1,4 +1,4 @@
-package samples.satellizer;
+package samples.satellizer.domain;
 
 /**
  * Date: 5/1/15
