@@ -55,4 +55,8 @@ angular.module('MyApp', ['ngResource', 'ngMessages', 'ui.router', 'mgcrea.ngStra
       clientId: '631036554609-v5hm2amv4pvico3asfi97f54sc51ji4o.apps.googleusercontent.com'
     });
 
+    $authProvider.twitter({
+      url: '/api/auth/twitter'
+    });
+
   });

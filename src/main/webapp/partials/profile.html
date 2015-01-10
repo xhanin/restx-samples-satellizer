@@ -35,6 +35,13 @@
         <button class="btn btn-sm btn-primary" ng-if="!user.google" ng-click="link('google')">
           <i class="ion-social-googleplus"></i> Link Google Account
         </button>
+
+        <button class="btn btn-sm btn-danger" ng-if="user.twitter" ng-click="unlink('twitter')">
+          <i class="ion-social-twitter"></i> Unlink Twitter Account
+        </button>
+        <button class="btn btn-sm btn-primary" ng-if="!user.twitter" ng-click="link('twitter')">
+          <i class="ion-social-twitter"></i> Link Twitter Account
+        </button>
       </div>
     </div>
   </div>
