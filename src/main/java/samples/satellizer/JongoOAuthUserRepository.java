@@ -113,6 +113,25 @@ public abstract class JongoOAuthUserRepository<U extends RestxPrincipal> extends
     }
 
     @Override
+    public void unlinkProviderAccount(U user, String providerName) {
+        long count = countAuthenticationMethods(user);
+
+        if (count <= 1) {
+            throw new IllegalStateException("can't unlink - it's the only authentication method available");
+        }
+
+        usersProviders.get().remove("{provider: #, userRef: #}", providerName, userRefStrategy.getUserRef(user));
+    }
+
+    public long countAuthenticationMethods(U user) {
+        long count = usersProviders.get().count("{userRef: #}", userRefStrategy.getUserRef(user));
+        if (findCredentialByUserName(user.getName()).isPresent()) {
+            count++;
+        }
+        return count;
+    }
+
+    @Override
     public U createNewUserWithLinkedProviderAccount(ProviderUserInfo providerUserInfo) {
         U user = createNewUserFromProvider(providerUserInfo);
 

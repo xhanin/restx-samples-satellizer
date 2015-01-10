@@ -36,16 +36,16 @@ public class LoginResource {
         Optional<AppUser> user = userRepository.findByEmail(login.getEmail());
 
         if (!user.isPresent()) {
-            throw new WebException(HttpStatus.UNAUTHORIZED, "Invalid login, check email and password");
+            throw new SatellizerException(HttpStatus.UNAUTHORIZED, "Invalid login, check email and password");
         }
 
         Optional<String> credentials = userRepository.findCredentialByUserName(user.get().getName());
         if (!credentials.isPresent()) {
-            throw new WebException(HttpStatus.UNAUTHORIZED, "Invalid login, check email and password");
+            throw new SatellizerException(HttpStatus.UNAUTHORIZED, "Invalid login, check email and password");
         }
 
         if (!credentialsStrategy.checkCredentials(user.get().getName(), login.getPassword(), credentials.get())) {
-            throw new WebException(HttpStatus.UNAUTHORIZED, "Invalid login, check email and password");
+            throw new SatellizerException(HttpStatus.UNAUTHORIZED, "Invalid login, check email and password");
         }
 
         return authUtils.createToken(request.getClientAddress(), user.get().getName());

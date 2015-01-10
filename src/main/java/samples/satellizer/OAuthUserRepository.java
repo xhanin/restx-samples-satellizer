@@ -13,5 +13,6 @@ public interface OAuthUserRepository<U extends RestxPrincipal> extends UserRepos
     Optional<U> findByProvider(String providerName, String userIdForProvider);
 
     void linkProviderAccount(U user, ProviderUserInfo providerUserInfo);
+    void unlinkProviderAccount(U user, String providerName);
     U createNewUserWithLinkedProviderAccount(ProviderUserInfo providerUserInfo);
 }

@@ -3,6 +3,7 @@ package samples.satellizer;
 import com.google.common.base.Optional;
 import org.bson.types.ObjectId;
 import restx.factory.Component;
+import restx.http.HttpStatus;
 import restx.jongo.JongoCollection;
 import restx.security.CredentialsStrategy;
 
@@ -46,6 +47,19 @@ public class AppUserRepository extends JongoOAuthUserRepository<AppUser> {
                         .setDisplayName(providerUserInfo.getDisplayName().or(""))
                         .setEmail(providerUserInfo.getEmail().or(""))
         );
+    }
+
+    @Override
+    public AppUser createNewUserWithLinkedProviderAccount(ProviderUserInfo providerUserInfo) {
+        // prevent registering a user by provider auth with same email as existing one
+        if (providerUserInfo.getEmail().isPresent()
+                && findByEmail(providerUserInfo.getEmail().get()).isPresent()) {
+            throw new SatellizerException(HttpStatus.UNAUTHORIZED,
+                    "can't create user for " + providerUserInfo.getEmail().get() + ":" +
+                            " a user with that email is already registered. Please login first" +
+                            " and then choose 'link' on the profile page");
+        }
+        return super.createNewUserWithLinkedProviderAccount(providerUserInfo);
     }
 
     public AppUser newAppUser() {
