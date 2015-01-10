@@ -1,7 +1,6 @@
 package samples.satellizer;
 
 import restx.factory.Component;
-import restx.security.StdUser;
 
 /**
  * Date: 4/1/15
