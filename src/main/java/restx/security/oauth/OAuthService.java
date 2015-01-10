@@ -9,11 +9,15 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import restx.RestxRequest;
 import restx.security.RestxPrincipal;
 import restx.security.RestxSession;
 
 public class OAuthService<U extends RestxPrincipal> {
+	private static final Logger logger = LoggerFactory.getLogger(OAuthService.class);
+
 	private static final JWSHeader JWT_HEADER = new JWSHeader(JWSAlgorithm.HS256);
 	private final String tokenSecret;
 	private final OAuthUserRepository<U> dao;
@@ -24,6 +28,11 @@ public class OAuthService<U extends RestxPrincipal> {
 	}
 
 	public Token processUser(RestxRequest request, ProviderUserInfo providerUserInfo) {
+		logger.debug("{} authenticated with {} - {}",
+				providerUserInfo.getDisplayName().or(providerUserInfo.getEmail()).or(providerUserInfo.getUserIdForProvider()),
+				providerUserInfo.getProviderName(),
+				providerUserInfo.getUserInfo());
+
 		U user;
 
 		RestxSession current = RestxSession.current();
