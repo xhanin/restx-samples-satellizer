@@ -56,12 +56,8 @@ public class JWTAuthenticationFilter implements RestxFilter {
                     logger.debug("JWT authenticated '{}'", principal.get().getName());
 
                     RestxSession.current().authenticateAs(principal.get());
-                    try {
-                        ctx.nextHandlerMatch().handle(req, resp, ctx);
-                    } finally {
-                        // we don't want to keep the principal in restx session, we want to trust the bearer only
-                        RestxSession.current().clearPrincipal();
-                    }
+
+                    ctx.nextHandlerMatch().handle(req, resp, ctx);
                 } else {
                     throw new WebException(HttpStatus.UNAUTHORIZED, "Principal unknown");
                 }

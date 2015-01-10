@@ -49,6 +49,18 @@ public class AppModule {
     }
 
     @Provides
+    @Named("restx.activation::restx.security.RestxSessionCookieFilter::RestxSessionCookieFilter")
+    public String disableCookieAuthentication() {
+        return "false";
+    }
+
+    @Provides
+    @Named("restx.activation::restx.security.RestxSessionBareFilter::RestxSessionBareFilter")
+    public String enableBareFilter() {
+        return "true";
+    }
+
+    @Provides
     public BasicPrincipalAuthenticator basicPrincipalAuthenticator(
             SecuritySettings securitySettings, CredentialsStrategy credentialsStrategy,
             @Named("restx.admin.passwordHash") String defaultAdminPasswordHash,
