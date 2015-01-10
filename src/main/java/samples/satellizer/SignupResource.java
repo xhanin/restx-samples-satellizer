@@ -16,11 +16,11 @@ import restx.security.PermitAll;
 @RestxResource
 public class SignupResource {
     private final AppUserRepository userRepository;
-    private final AuthUtils authUtils;
+    private final OAuthService OAuthService;
 
-    public SignupResource(AppUserRepository userRepository, AuthUtils authUtils) {
+    public SignupResource(AppUserRepository userRepository, OAuthService OAuthService) {
         this.userRepository = userRepository;
-        this.authUtils = authUtils;
+        this.OAuthService = OAuthService;
     }
 
     @PermitAll
@@ -39,6 +39,6 @@ public class SignupResource {
 
         userRepository.setCredentials(u.getName(), signup.getPassword());
 
-        return authUtils.createToken(request.getClientAddress(), u.getName());
+        return OAuthService.createToken(request.getClientAddress(), u.getName());
     }
 }

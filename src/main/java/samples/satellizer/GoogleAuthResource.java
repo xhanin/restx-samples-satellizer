@@ -42,11 +42,11 @@ public class GoogleAuthResource {
     private final ObjectMapper mapper = new ObjectMapper();
 
     private final ClientSecretsSettings secrets;
-    private final AuthUtils authUtils;
+    private final OAuthService OAuthService;
 
-    public GoogleAuthResource(ClientSecretsSettings secrets, AuthUtils authUtils) {
+    public GoogleAuthResource(ClientSecretsSettings secrets, OAuthService OAuthService) {
         this.secrets = secrets;
-        this.authUtils = authUtils;
+        this.OAuthService = OAuthService;
     }
 
     @PermitAll
@@ -66,7 +66,7 @@ public class GoogleAuthResource {
 
         logger.debug("{} authenticated with Google - {}", userName, userInfo);
 
-        return authUtils.processUser(request, new ProviderUserInfo()
+        return OAuthService.processUser(request, new ProviderUserInfo()
                 .setProviderName("google")
                 .setUserIdForProvider(userId)
                 .setDisplayName(Optional.of(userName))

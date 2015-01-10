@@ -7,8 +7,8 @@ import restx.factory.Component;
  * Time: 23:02
  */
 @Component
-public class AppAuthUtils extends AuthUtils<AppUser> {
-    public AppAuthUtils(ClientSecretsSettings secrets, AppUserRepository dao) {
+public class AppOAuthService extends OAuthService<AppUser> {
+    public AppOAuthService(ClientSecretsSettings secrets, AppUserRepository dao) {
         super(secrets, dao);
     }
 }

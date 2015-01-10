@@ -13,12 +13,12 @@ import restx.RestxRequest;
 import restx.security.RestxPrincipal;
 import restx.security.RestxSession;
 
-public class AuthUtils<U extends RestxPrincipal> {
+public class OAuthService<U extends RestxPrincipal> {
 	private static final JWSHeader JWT_HEADER = new JWSHeader(JWSAlgorithm.HS256);
 	private final String tokenSecret;
 	private final OAuthUserRepository<U> dao;
 
-	public AuthUtils(ClientSecretsSettings secrets, OAuthUserRepository<U> dao) {
+	public OAuthService(ClientSecretsSettings secrets, OAuthUserRepository<U> dao) {
 		this.dao = dao;
 		this.tokenSecret = secrets.getTokenSecret();
 	}
@@ -29,31 +29,42 @@ public class AuthUtils<U extends RestxPrincipal> {
 		RestxSession current = RestxSession.current();
 
 		if (current != null && current.getPrincipal().isPresent()) {
-			// Step 3a. If user is already signed in then link accounts.
-			Optional<U> userFromDb = dao.findByProvider(
-					providerUserInfo.getProviderName(), providerUserInfo.getUserIdForProvider());
+			user = processUserToLink(current.getPrincipal().get(), providerUserInfo);
 
-			if (userFromDb.isPresent()) {
-				// the user is already linked to that provider
-				user = userFromDb.get();
-			} else {
-				user = getUserFromSession(current);
-
-				dao.linkProviderAccount(user, providerUserInfo);
-			}
 		} else {
-			// Step 3b. Create a new user account or return an existing one.
-			Optional<U> userFromDb = dao.findByProvider(
-					providerUserInfo.getProviderName(), providerUserInfo.getUserIdForProvider());
-
-			if (userFromDb.isPresent()) {
-				user = userFromDb.get();
-			} else {
-				user = dao.createNewUserWithLinkedProviderAccount(providerUserInfo);
-			}
+			user = processUserToCreate(providerUserInfo);
 		}
 
 		return createToken(request.getClientAddress(), user.getName());
+	}
+
+	protected U processUserToCreate(ProviderUserInfo providerUserInfo) {
+		U user;// Create a new user account or return an existing one.
+		Optional<U> userFromDb = dao.findByProvider(
+                providerUserInfo.getProviderName(), providerUserInfo.getUserIdForProvider());
+
+		if (userFromDb.isPresent()) {
+            user = userFromDb.get();
+        } else {
+            user = dao.createNewUserWithLinkedProviderAccount(providerUserInfo);
+        }
+		return user;
+	}
+
+	protected U processUserToLink(RestxPrincipal principal, ProviderUserInfo providerUserInfo) {
+		U user;// If user is already signed in then link accounts.
+		Optional<U> userFromDb = dao.findByProvider(
+                providerUserInfo.getProviderName(), providerUserInfo.getUserIdForProvider());
+
+		if (userFromDb.isPresent()) {
+            // the user is already linked to that provider
+            user = userFromDb.get();
+        } else {
+            user = castPrincipal(principal);
+
+            dao.linkProviderAccount(user, providerUserInfo);
+        }
+		return user;
 	}
 
 	public Token createToken(String host, String subject) {
@@ -76,7 +87,7 @@ public class AuthUtils<U extends RestxPrincipal> {
 	}
 
 	@SuppressWarnings("unchecked")
-	private U getUserFromSession(RestxSession current) {
-		return (U) current.getPrincipal().get();
+	private U castPrincipal(RestxPrincipal principal) {
+		return (U) principal;
 	}
 }
