@@ -11,6 +11,7 @@ import restx.factory.Component;
 import restx.security.PermitAll;
 import restx.security.oauth.ClientSecretsSettings;
 import restx.security.oauth.OAuthPayload;
+import restx.security.oauth.OAuthUserService;
 import restx.security.oauth.ProviderUserInfo;
 import restx.security.oauth.Token;
 
@@ -30,8 +31,8 @@ public class GoogleOAuthProvider extends AbstractOAuthProvider {
             ACCESS_TOKEN_URL = "https://accounts.google.com/o/oauth2/token",
             PEOPLE_API_URL = "https://www.googleapis.com/plus/v1/people/me/openIdConnect";
 
-    public GoogleOAuthProvider(ClientSecretsSettings secrets, restx.security.oauth.OAuthService OAuthService) {
-        super(ACCESS_TOKEN_URL, OAuthService, secrets);
+    public GoogleOAuthProvider(ClientSecretsSettings secrets, OAuthUserService OAuthUserService) {
+        super(ACCESS_TOKEN_URL, OAuthUserService, secrets);
     }
 
     @PermitAll
@@ -47,7 +48,7 @@ public class GoogleOAuthProvider extends AbstractOAuthProvider {
 
         Map<String, Object> userInfo = getJsonResponseAsMap(peopleRequest);
 
-        return OAuthService.processUser(request, new ProviderUserInfo()
+        return OAuthUserService.processUser(request, new ProviderUserInfo()
                 .setProviderName(ID)
                 .setUserIdForProvider((String) userInfo.get("sub"))
                 .setDisplayName(Optional.of((String) userInfo.get("name")))

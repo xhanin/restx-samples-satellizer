@@ -15,14 +15,14 @@ import restx.RestxRequest;
 import restx.security.RestxPrincipal;
 import restx.security.RestxSession;
 
-public class OAuthService<U extends RestxPrincipal> {
-	private static final Logger logger = LoggerFactory.getLogger(OAuthService.class);
+public class OAuthUserService<U extends RestxPrincipal> {
+	private static final Logger logger = LoggerFactory.getLogger(OAuthUserService.class);
 
 	private static final JWSHeader JWT_HEADER = new JWSHeader(JWSAlgorithm.HS256);
 	private final String tokenSecret;
 	private final OAuthUserRepository<U> dao;
 
-	public OAuthService(ClientSecretsSettings secrets, OAuthUserRepository<U> dao) {
+	public OAuthUserService(ClientSecretsSettings secrets, OAuthUserRepository<U> dao) {
 		this.dao = dao;
 		this.tokenSecret = secrets.getTokenSecret();
 	}

@@ -9,7 +9,7 @@ import restx.factory.Component;
 import restx.http.HttpStatus;
 import restx.security.CredentialsStrategy;
 import restx.security.PermitAll;
-import restx.security.oauth.OAuthService;
+import restx.security.oauth.OAuthUserService;
 import restx.security.oauth.Token;
 import samples.satellizer.domain.AppUser;
 import samples.satellizer.domain.AppUserLogin;
@@ -25,12 +25,12 @@ import samples.satellizer.SatellizerException;
 @RestxResource
 public class LoginResource {
     private final AppUserRepository userRepository;
-    private final OAuthService OAuthService;
+    private final OAuthUserService OAuthUserService;
     private final CredentialsStrategy credentialsStrategy;
 
-    public LoginResource(AppUserRepository userRepository, restx.security.oauth.OAuthService OAuthService, CredentialsStrategy credentialsStrategy) {
+    public LoginResource(AppUserRepository userRepository, OAuthUserService OAuthUserService, CredentialsStrategy credentialsStrategy) {
         this.userRepository = userRepository;
-        this.OAuthService = OAuthService;
+        this.OAuthUserService = OAuthUserService;
         this.credentialsStrategy = credentialsStrategy;
     }
 
@@ -53,6 +53,6 @@ public class LoginResource {
             throw new SatellizerException(HttpStatus.UNAUTHORIZED, "Invalid login, check email and password");
         }
 
-        return OAuthService.createToken(request.getClientAddress(), user.get().getName());
+        return OAuthUserService.createToken(request.getClientAddress(), user.get().getName());
     }
 }

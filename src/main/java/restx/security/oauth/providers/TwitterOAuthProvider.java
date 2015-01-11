@@ -9,15 +9,13 @@ import restx.RestxRequest;
 import restx.RestxResponse;
 import restx.WebException;
 import restx.annotations.GET;
-import restx.annotations.POST;
 import restx.annotations.Param;
 import restx.annotations.RestxResource;
 import restx.factory.Component;
 import restx.http.HttpStatus;
 import restx.security.PermitAll;
 import restx.security.oauth.ClientSecretsSettings;
-import restx.security.oauth.OAuthPayload;
-import restx.security.oauth.OAuthService;
+import restx.security.oauth.OAuthUserService;
 import restx.security.oauth.ProviderUserInfo;
 import restx.security.oauth.Token;
 
@@ -34,12 +32,12 @@ import java.util.Map;
 public class TwitterOAuthProvider {
     public static final String ID = "twitter";
 
-    private final OAuthService oAuthService;
+    private final OAuthUserService oAuthUserService;
     private final org.scribe.oauth.OAuthService service;
 
-    public TwitterOAuthProvider(OAuthService oAuthService, ClientSecretsSettings secrets,
+    public TwitterOAuthProvider(OAuthUserService oAuthUserService, ClientSecretsSettings secrets,
                                 @Named("restx.twitter.callbackUrl") String baseUrl) {
-        this.oAuthService = oAuthService;
+        this.oAuthUserService = oAuthUserService;
 
         service = new ServiceBuilder()
                 .provider(TwitterApi.class)
@@ -70,7 +68,7 @@ public class TwitterOAuthProvider {
 
             Map<String, String> userInfo = Splitter.on('&').withKeyValueSeparator('=').split(accessToken.getRawResponse());
 
-            return oAuthService.processUser(request, new ProviderUserInfo()
+            return oAuthUserService.processUser(request, new ProviderUserInfo()
                     .setProviderName(ID)
                     .setUserIdForProvider(userInfo.get("user_id"))
                     .setDisplayName(Optional.of(userInfo.get("screen_name")))

@@ -10,7 +10,7 @@ import restx.factory.Component;
 import restx.security.PermitAll;
 import restx.security.oauth.ClientSecretsSettings;
 import restx.security.oauth.OAuthPayload;
-import restx.security.oauth.OAuthService;
+import restx.security.oauth.OAuthUserService;
 import restx.security.oauth.ProviderUserInfo;
 import restx.security.oauth.Token;
 
@@ -29,8 +29,8 @@ public class FacebookOAuthProvider extends AbstractOAuthProvider {
     private static final String ACCESS_TOKEN_URL = "https://graph.facebook.com/oauth/access_token",
         GRAPH_API_URL = "https://graph.facebook.com/me";
 
-    public FacebookOAuthProvider(OAuthService OAuthService, ClientSecretsSettings secrets) {
-        super(ACCESS_TOKEN_URL, OAuthService, secrets);
+    public FacebookOAuthProvider(OAuthUserService OAuthUserService, ClientSecretsSettings secrets) {
+        super(ACCESS_TOKEN_URL, OAuthUserService, secrets);
     }
 
     @PermitAll
@@ -43,7 +43,7 @@ public class FacebookOAuthProvider extends AbstractOAuthProvider {
 
         Map<String, Object> userInfo = getJsonResponseAsMap(graphRequest);
 
-        return OAuthService.processUser(request, new ProviderUserInfo()
+        return OAuthUserService.processUser(request, new ProviderUserInfo()
                 .setProviderName(ID)
                 .setUserIdForProvider((String) userInfo.get("id"))
                 .setDisplayName(Optional.of((String) userInfo.get("name")))

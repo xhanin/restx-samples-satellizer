@@ -7,7 +7,7 @@ import restx.annotations.RestxResource;
 import restx.factory.Component;
 import restx.http.HttpStatus;
 import restx.security.PermitAll;
-import restx.security.oauth.OAuthService;
+import restx.security.oauth.OAuthUserService;
 import restx.security.oauth.Token;
 import samples.satellizer.domain.AppUser;
 import samples.satellizer.service.AppUserRepository;
@@ -22,11 +22,11 @@ import samples.satellizer.SatellizerException;
 @RestxResource
 public class SignupResource {
     private final AppUserRepository userRepository;
-    private final restx.security.oauth.OAuthService OAuthService;
+    private final OAuthUserService OAuthUserService;
 
-    public SignupResource(AppUserRepository userRepository, OAuthService OAuthService) {
+    public SignupResource(AppUserRepository userRepository, OAuthUserService OAuthUserService) {
         this.userRepository = userRepository;
-        this.OAuthService = OAuthService;
+        this.OAuthUserService = OAuthUserService;
     }
 
     @PermitAll
@@ -45,6 +45,6 @@ public class SignupResource {
 
         userRepository.setCredentials(u.getName(), signup.getPassword());
 
-        return OAuthService.createToken(request.getClientAddress(), u.getName());
+        return OAuthUserService.createToken(request.getClientAddress(), u.getName());
     }
 }

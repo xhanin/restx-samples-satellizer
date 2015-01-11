@@ -11,7 +11,7 @@ import restx.WebException;
 import restx.http.HttpStatus;
 import restx.security.oauth.ClientSecretsSettings;
 import restx.security.oauth.OAuthPayload;
-import restx.security.oauth.OAuthService;
+import restx.security.oauth.OAuthUserService;
 
 import java.io.IOException;
 import java.util.Map;
@@ -31,14 +31,14 @@ public class AbstractOAuthProvider {
             AUTH_CODE = "authorization_code";
 
     protected final ClientSecretsSettings secrets;
-    protected final OAuthService OAuthService;
+    protected final OAuthUserService OAuthUserService;
 
     private final ObjectMapper mapper = new ObjectMapper();
     private final String accessTokenUrl;
 
-    public AbstractOAuthProvider(String accessTokenUrl, OAuthService OAuthService, ClientSecretsSettings secrets) {
+    public AbstractOAuthProvider(String accessTokenUrl, OAuthUserService OAuthUserService, ClientSecretsSettings secrets) {
         this.accessTokenUrl = accessTokenUrl;
-        this.OAuthService = OAuthService;
+        this.OAuthUserService = OAuthUserService;
         this.secrets = secrets;
     }
 
