@@ -20,10 +20,10 @@ public class OAuthUserService<U extends RestxPrincipal> {
 
 	private static final JWSHeader JWT_HEADER = new JWSHeader(JWSAlgorithm.HS256);
 	private final String tokenSecret;
-	private final OAuthUserRepository<U> dao;
+	private final OAuthUserRepository<U> repository;
 
-	public OAuthUserService(ClientSecretsSettings secrets, OAuthUserRepository<U> dao) {
-		this.dao = dao;
+	public OAuthUserService(ClientSecretsSettings secrets, OAuthUserRepository<U> repository) {
+		this.repository = repository;
 		this.tokenSecret = secrets.getTokenSecret();
 	}
 
@@ -49,20 +49,20 @@ public class OAuthUserService<U extends RestxPrincipal> {
 
 	protected U processUserToCreate(ProviderUserInfo providerUserInfo) {
 		U user;// Create a new user account or return an existing one.
-		Optional<U> userFromDb = dao.findByProvider(
+		Optional<U> userFromDb = repository.findByProvider(
                 providerUserInfo.getProviderName(), providerUserInfo.getUserIdForProvider());
 
 		if (userFromDb.isPresent()) {
             user = userFromDb.get();
         } else {
-            user = dao.createNewUserWithLinkedProviderAccount(providerUserInfo);
+            user = repository.createNewUserWithLinkedProviderAccount(providerUserInfo);
         }
 		return user;
 	}
 
 	protected U processUserToLink(RestxPrincipal principal, ProviderUserInfo providerUserInfo) {
 		U user;// If user is already signed in then link accounts.
-		Optional<U> userFromDb = dao.findByProvider(
+		Optional<U> userFromDb = repository.findByProvider(
                 providerUserInfo.getProviderName(), providerUserInfo.getUserIdForProvider());
 
 		if (userFromDb.isPresent()) {
@@ -71,7 +71,7 @@ public class OAuthUserService<U extends RestxPrincipal> {
         } else {
             user = castPrincipal(principal);
 
-            dao.linkProviderAccount(user, providerUserInfo);
+            repository.linkProviderAccount(user, providerUserInfo);
         }
 		return user;
 	}
