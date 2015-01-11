@@ -52,6 +52,8 @@ public class MeResource {
     private void loadProviders(AppUser user, AppUserProfile profile) {
         profile
                 .setGoogle(userRepository.hasProvider(user, "google"))
-                .setFacebook(userRepository.hasProvider(user, "facebook"));
+                .setFacebook(userRepository.hasProvider(user, "facebook"))
+                .setTwitter(userRepository.hasProvider(user, "twitter"))
+        ;
     }
 }

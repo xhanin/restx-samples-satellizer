@@ -21,6 +21,9 @@ public interface ClientSecretsSettings {
 	@SettingsKey(key = "restx.oauth.secrets.foursquare")
 	public Optional<String> getFoursquare();
 
-	@SettingsKey(key = "restx.oauth.secrets.twitter")
-	public Optional<String> getTwitter();
+	@SettingsKey(key = "restx.oauth.secrets.twitter.consumerKey")
+	public Optional<String> getTwitterConsumerKey();
+
+	@SettingsKey(key = "restx.oauth.secrets.twitter.consumerSecret")
+	public Optional<String> getTwitterConsumerSecret();
 }

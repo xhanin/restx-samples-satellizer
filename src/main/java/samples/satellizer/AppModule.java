@@ -25,6 +25,12 @@ public class AppModule {
     }
 
     @Provides
+    @Named("restx.server.baseUrl")
+    public String serverBaseUrl() {
+        return "http://localhost:3000/";
+    }
+
+    @Provides
     public ConfigSupplier appConfigSupplier(ConfigLoader configLoader) {
         // Load settings.properties in samples.satellizer package as a set of config entries
         return configLoader.fromResource("samples/satellizer/settings");

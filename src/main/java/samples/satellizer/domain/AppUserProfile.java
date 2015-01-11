@@ -7,6 +7,7 @@ package samples.satellizer.domain;
 public class AppUserProfile extends AppUser {
     private boolean facebook;
     private boolean google;
+    private boolean twitter;
 
     public boolean isFacebook() {
         return facebook;
@@ -16,6 +17,10 @@ public class AppUserProfile extends AppUser {
         return google;
     }
 
+    public boolean isTwitter() {
+        return twitter;
+    }
+
     public AppUserProfile setFacebook(final boolean facebook) {
         this.facebook = facebook;
         return this;
@@ -23,6 +28,11 @@ public class AppUserProfile extends AppUser {
 
     public AppUserProfile setGoogle(final boolean google) {
         this.google = google;
+        return this;
+    }
+
+    public AppUserProfile setTwitter(final boolean twitter) {
+        this.twitter = twitter;
         return this;
     }
 }

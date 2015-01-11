@@ -15,7 +15,7 @@ public class ProviderUserInfo {
 
     private Optional<String> displayName = Optional.absent();
     private Optional<String> email = Optional.absent();
-    private Map<String, Object> userInfo = new HashMap<>();
+    private Map<String, ?> userInfo = new HashMap<>();
 
     public String getProviderName() {
         return providerName;
@@ -33,7 +33,7 @@ public class ProviderUserInfo {
         return email;
     }
 
-    public Map<String, Object> getUserInfo() {
+    public Map<String, ?> getUserInfo() {
         return userInfo;
     }
 
@@ -57,7 +57,7 @@ public class ProviderUserInfo {
         return this;
     }
 
-    public ProviderUserInfo setUserInfo(final Map<String, Object> userInfo) {
+    public ProviderUserInfo setUserInfo(final Map<String, ?> userInfo) {
         this.userInfo = userInfo;
         return this;
     }
