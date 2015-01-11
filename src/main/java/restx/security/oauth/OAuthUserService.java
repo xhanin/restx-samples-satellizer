@@ -38,7 +38,7 @@ public class OAuthUserService<U extends RestxPrincipal> {
 		RestxSession current = RestxSession.current();
 
 		if (current != null && current.getPrincipal().isPresent()) {
-			user = processUserToLink(current.getPrincipal().get(), providerUserInfo);
+			user = processUserToLink(castPrincipal(current.getPrincipal().get()), providerUserInfo);
 
 		} else {
 			user = processUserToCreate(providerUserInfo);
@@ -48,7 +48,9 @@ public class OAuthUserService<U extends RestxPrincipal> {
 	}
 
 	protected U processUserToCreate(ProviderUserInfo providerUserInfo) {
-		U user;// Create a new user account or return an existing one.
+		// Create a new user account or return an existing one.
+
+		U user;
 		Optional<U> userFromDb = repository.findByProvider(
                 providerUserInfo.getProviderName(), providerUserInfo.getUserIdForProvider());
 
@@ -60,16 +62,23 @@ public class OAuthUserService<U extends RestxPrincipal> {
 		return user;
 	}
 
-	protected U processUserToLink(RestxPrincipal principal, ProviderUserInfo providerUserInfo) {
-		U user;// If user is already signed in then link accounts.
+	protected U processUserToLink(U principal, ProviderUserInfo providerUserInfo) {
+		// If user is already signed in then link accounts.
+
+		U user;
 		Optional<U> userFromDb = repository.findByProvider(
                 providerUserInfo.getProviderName(), providerUserInfo.getUserIdForProvider());
 
 		if (userFromDb.isPresent()) {
-            // the user is already linked to that provider
-            user = userFromDb.get();
+            // a user is already linked to that provider
+			if (userFromDb.get().getName().equals(principal.getName())) {
+				user = userFromDb.get();
+			} else {
+				throw new IllegalStateException(
+						"can't link account. There is already another user linked with that account.");
+			}
         } else {
-            user = castPrincipal(principal);
+            user = principal;
 
             repository.linkProviderAccount(user, providerUserInfo);
         }

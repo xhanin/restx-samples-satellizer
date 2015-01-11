@@ -3,10 +3,8 @@ package samples.satellizer.rest;
 import restx.annotations.GET;
 import restx.annotations.RestxResource;
 import restx.factory.Component;
-import restx.http.HttpStatus;
 import restx.security.RestxSession;
 import restx.security.oauth.OAuthUserRepository;
-import samples.satellizer.SatellizerException;
 
 /**
  * Date: 10/1/15
@@ -23,10 +21,6 @@ public class UnlinkProviderResource {
 
     @GET("/auth/unlink/:providerName")
     public void unlink(String providerName) {
-        try {
-            userRepository.unlinkProviderAccount(RestxSession.current().getPrincipal().get(), providerName);
-        } catch (IllegalStateException e) {
-            throw new SatellizerException(HttpStatus.UNAUTHORIZED, e.getMessage());
-        }
+        userRepository.unlinkProviderAccount(RestxSession.current().getPrincipal().get(), providerName);
     }
 }
