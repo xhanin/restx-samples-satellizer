@@ -5,6 +5,9 @@ import restx.annotations.PUT;
 import restx.annotations.RestxResource;
 import restx.factory.Component;
 import restx.security.RestxSession;
+import restx.security.oauth.providers.FacebookOAuthProvider;
+import restx.security.oauth.providers.GoogleOAuthProvider;
+import restx.security.oauth.providers.TwitterOAuthProvider;
 import samples.satellizer.domain.AppUser;
 import samples.satellizer.domain.AppUserProfile;
 import samples.satellizer.service.AppUserRepository;
@@ -51,9 +54,9 @@ public class MeResource {
 
     private void loadProviders(AppUser user, AppUserProfile profile) {
         profile
-                .setGoogle(userRepository.hasProvider(user, "google"))
-                .setFacebook(userRepository.hasProvider(user, "facebook"))
-                .setTwitter(userRepository.hasProvider(user, "twitter"))
+                .setGoogle(userRepository.hasProvider(user, GoogleOAuthProvider.ID))
+                .setFacebook(userRepository.hasProvider(user, FacebookOAuthProvider.ID))
+                .setTwitter(userRepository.hasProvider(user, TwitterOAuthProvider.ID))
         ;
     }
 }

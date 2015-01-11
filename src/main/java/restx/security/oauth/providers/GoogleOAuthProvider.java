@@ -24,7 +24,9 @@ import java.util.Map;
 @Component
 @RestxResource(group = "auth")
 public class GoogleOAuthProvider extends AbstractOAuthProvider {
-    public static final String
+    public static final String ID = "google";
+
+    private static final String
             ACCESS_TOKEN_URL = "https://accounts.google.com/o/oauth2/token",
             PEOPLE_API_URL = "https://www.googleapis.com/plus/v1/people/me/openIdConnect";
 
@@ -46,7 +48,7 @@ public class GoogleOAuthProvider extends AbstractOAuthProvider {
         Map<String, Object> userInfo = getJsonResponseAsMap(peopleRequest);
 
         return OAuthService.processUser(request, new ProviderUserInfo()
-                .setProviderName("google")
+                .setProviderName(ID)
                 .setUserIdForProvider((String) userInfo.get("sub"))
                 .setDisplayName(Optional.of((String) userInfo.get("name")))
                 .setEmail(Optional.fromNullable((String) userInfo.get("email")))

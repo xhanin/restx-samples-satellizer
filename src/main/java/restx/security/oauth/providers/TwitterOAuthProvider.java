@@ -32,6 +32,8 @@ import java.util.Map;
 @Component
 @RestxResource(group = "auth")
 public class TwitterOAuthProvider {
+    public static final String ID = "twitter";
+
     private final OAuthService oAuthService;
     private final org.scribe.oauth.OAuthService service;
 
@@ -69,7 +71,7 @@ public class TwitterOAuthProvider {
             Map<String, String> userInfo = Splitter.on('&').withKeyValueSeparator('=').split(accessToken.getRawResponse());
 
             return oAuthService.processUser(request, new ProviderUserInfo()
-                    .setProviderName("twitter")
+                    .setProviderName(ID)
                     .setUserIdForProvider(userInfo.get("user_id"))
                     .setDisplayName(Optional.of(userInfo.get("screen_name")))
                     .setEmail(Optional.<String>absent())

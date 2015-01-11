@@ -24,6 +24,8 @@ import java.util.Map;
 @Component
 @RestxResource(group = "auth")
 public class FacebookOAuthProvider extends AbstractOAuthProvider {
+    public static final String ID = "facebook";
+
     private static final String ACCESS_TOKEN_URL = "https://graph.facebook.com/oauth/access_token",
         GRAPH_API_URL = "https://graph.facebook.com/me";
 
@@ -42,7 +44,7 @@ public class FacebookOAuthProvider extends AbstractOAuthProvider {
         Map<String, Object> userInfo = getJsonResponseAsMap(graphRequest);
 
         return OAuthService.processUser(request, new ProviderUserInfo()
-                .setProviderName("facebook")
+                .setProviderName(ID)
                 .setUserIdForProvider((String) userInfo.get("id"))
                 .setDisplayName(Optional.of((String) userInfo.get("name")))
                 .setEmail(Optional.fromNullable((String) userInfo.get("email")))
