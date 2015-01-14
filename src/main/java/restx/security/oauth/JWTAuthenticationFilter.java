@@ -1,6 +1,8 @@
 package restx.security.oauth;
 
 import com.google.common.base.Optional;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.ReadOnlyJWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
@@ -35,6 +37,8 @@ public class JWTAuthenticationFilter implements RestxFilter {
     private static final Logger logger = LoggerFactory.getLogger(JWTAuthenticationFilter.class);
 
     private final BasicPrincipalAuthenticator authenticator;
+    private final String tokenSecret;
+
 
     private RestxHandler bearerHandler = new RestxHandler() {
         @Override
@@ -42,7 +46,7 @@ public class JWTAuthenticationFilter implements RestxFilter {
             JWTClaimsSet claimSet;
             try {
                 claimSet = (JWTClaimsSet) decodeToken(req.getHeader("Authorization").get());
-            } catch (ParseException e) {
+            } catch (ParseException|JOSEException e) {
                 throw new WebException(HttpStatus.BAD_REQUEST, "Invalid JWT Token - " + e.getMessage());
             }
 
@@ -64,8 +68,12 @@ public class JWTAuthenticationFilter implements RestxFilter {
             }
         }
 
-        public ReadOnlyJWTClaimsSet decodeToken(String authHeader) throws ParseException {
-            return SignedJWT.parse(getSerializedToken(authHeader)).getJWTClaimsSet();
+        public ReadOnlyJWTClaimsSet decodeToken(String authHeader) throws ParseException, JOSEException {
+            SignedJWT signedJWT = SignedJWT.parse(getSerializedToken(authHeader));
+            if (!signedJWT.verify(new MACVerifier(tokenSecret))) {
+                throw new JOSEException("signature verification failed");
+            }
+            return signedJWT.getJWTClaimsSet();
         }
 
         public String getSerializedToken(String authHeader) {
@@ -73,8 +81,10 @@ public class JWTAuthenticationFilter implements RestxFilter {
         }
     };
 
-    public JWTAuthenticationFilter(BasicPrincipalAuthenticator authenticator) {
+    public JWTAuthenticationFilter(ClientSecretsSettings secrets,
+                                   BasicPrincipalAuthenticator authenticator) {
         this.authenticator = authenticator;
+        this.tokenSecret = secrets.getTokenSecret();
     }
 
     @Override
